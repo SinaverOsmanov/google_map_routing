@@ -1,5 +1,5 @@
-import {InitdataState} from "./app/types";
+import {MapState} from "./app/types";
 
 export type State = {
-    initdata: InitdataState
+    readonly map: MapState
 }

@@ -1,17 +1,37 @@
 import {handleActions} from "redux-actions";
-import {decrement, increment} from "./actions";
+import {setCurrentPoint, setMapPoints} from "./actions";
+import {MapState} from "./types";
+import {combineReducers} from "@reduxjs/toolkit";
+import {PointType} from "../../../types";
 
-const defaultState = {
-    count: 0,
-    list: []
+
+const initialState: MapState = {
+    points: [],
+    currentPoint: null
 }
 
-export const countReducer = handleActions({
-    [increment]: (state: any, action:any) => {
-        return {...state, count: state.count + action.payload}
+const points = handleActions(
+    {
+        [setMapPoints]: (
+            state: PointType[] | [],
+            action: { payload: PointType[] }
+        ) => [...action.payload],
     },
-    [decrement]: (state: any, action:any) => {
-        return {...state, count: state.count - action.payload}
-    },
-}, defaultState)
+    initialState.points
+)
 
+
+const currentPoint = handleActions(
+    {
+        [setCurrentPoint]: (
+            state: PointType | null,
+            action: { payload: PointType }
+        ) => action.payload,
+    },
+    initialState.currentPoint
+)
+
+export const mapReducer = combineReducers({
+    points,
+    currentPoint
+})

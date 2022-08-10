@@ -1,18 +1,21 @@
-import { createActions } from 'redux-actions';
+import {createActions} from 'redux-actions';
 
 const {
-    increment,
-    decrement,
-    setCount
+    getMapPoints,
+    setMapPoints,
+    getCurrentPoint,
+    setCurrentPoint
 }: {
-    increment?: any;
-    decrement?: any;
-    setCount?: any;
+    getMapPoints?: any;
+    setMapPoints?: any;
+    getCurrentPoint?: any;
+    setCurrentPoint?: any;
 } = createActions(
-    'INCREMENT',
-    'DECREMENT',
-    'SET_COUNT',
+    'GET_MAP_POINTS',
+    'SET_MAP_POINTS',
+    'GET_CURRENT_POINT',
+    'SET_CURRENT_POINT',
 );
-export { increment, decrement, setCount};
+export {getMapPoints, setMapPoints, getCurrentPoint, setCurrentPoint};
 
 

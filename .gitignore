@@ -11,7 +11,10 @@
 # production
 /build
 
-/.idea
+# IntellijIdea files
+*.iml
+.idea
+out
 
 # misc
 .DS_Store

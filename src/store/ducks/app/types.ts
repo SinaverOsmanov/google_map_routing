@@ -1,11 +1,9 @@
+import {PointType} from "../../../types";
+
 export type StateStatus = 'LOADING' | 'SUCCESS' | 'IDLE' | 'FAILURE';
 
-export interface InitdataState {
-    readonly status: StateStatus;
-    readonly list: any;
-    readonly counter: number;
+export type MapState = {
+    readonly points: PointType[] | [],
+    readonly currentPoint: PointType | null
 }
 
-export type InitDataAction = {
-    payload: any;
-};
