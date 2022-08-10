@@ -1,8 +1,8 @@
-
 import {combineReducers} from "redux";
-import {countReducer} from "./ducks/app/reducer";
+import {mapReducer} from "./ducks/app/reducer";
+import {State} from "./ducks/globalTypes";
 
 export default () =>
-    combineReducers({
-        countReducer
+    combineReducers<State>({
+        map: mapReducer
     })

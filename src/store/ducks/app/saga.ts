@@ -1,16 +1,24 @@
-import {takeEvery} from "redux-saga/effects"
-import {decrement, increment} from "./actions";
+import {call, put, takeEvery} from "redux-saga/effects"
+import {PointType} from "../../../types";
+import {getCurrentPoint, getMapPoints, setCurrentPoint, setMapPoints} from "./actions";
+import {getMapPointsRequest} from "./api/getMapPointsRequest";
 
-function* incrementWorker(any:any) {
-    console.log(any, 'incrementWorker')
+function* getCurrentPointWorker() {
+    const response: PointType[] = yield call(getMapPointsRequest)
+    const [currentPoint] = response;
+
+    yield put(setCurrentPoint(currentPoint))
+
 }
 
-function* decrementWorker(any:any) {
-    console.log(any, 'decrementWorker')
+function* getMapPointsWorker() {
+    const response: PointType[] = yield call(getMapPointsRequest)
+
+    yield put(setMapPoints(response))
 }
 
 
-export function* countWatcher() {
-    yield takeEvery(increment.toString(), incrementWorker)
-    yield takeEvery(decrement.toString(), decrementWorker)
+export function* mapWatcher() {
+    yield takeEvery(getCurrentPoint.toString(), getCurrentPointWorker)
+    yield takeEvery(getMapPoints.toString(), getMapPointsWorker)
 }
