@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Col, Divider, Input, Layout, List, Row} from "antd";
 import Map from "./map/Map";
 import {PointType} from "../types";
@@ -20,7 +20,6 @@ export default function MapList() {
     const [routeFrom, setRouteFrom] = useState<RouteAddressType | null>(null);
     const [routeTo, setRouteTo] = useState<RouteAddressType | null>(null);
     const [step, setStep] = useState(0);
-    const stepRef = useRef(0)
 
     const dispatch = useDispatch()
 
@@ -68,10 +67,14 @@ export default function MapList() {
     function showRouteClickHandler() {
         setShowRouteCreator((prev) => !prev)
         if (showRouteCreator) {
-            stepRef.current = 0
-            setRouteFrom(null)
-            setRouteTo(null)
+            clearRoute()
         }
+    }
+
+    function clearRoute() {
+        setStep(0)
+        setRouteFrom(null)
+        setRouteTo(null)
     }
 
     function createPointHandler() {
@@ -92,6 +95,8 @@ export default function MapList() {
                 }
             }
             dispatch(addNewPoint(newPoint))
+            clearRoute()
+            setShowRouteCreator(false)
         }
     }
 
