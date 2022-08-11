@@ -42,7 +42,7 @@ code {
 }
 
 .selected-button, .ant-btn:focus {
-    background: blue;
+    background: #757de7;
     color: #fff;
     box-shadow: none;
     border: none
@@ -52,6 +52,12 @@ code {
     font-weight: bold;
 }
 
+.addressName > div {
+    overflow: hidden;
+    height: 20px;
+}
+
 .active-item {
     background: rgba(0, 0, 0, 0.1);
 }
+
