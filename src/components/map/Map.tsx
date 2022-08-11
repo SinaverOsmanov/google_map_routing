@@ -12,21 +12,18 @@ import {MapProps} from "../../types";
 import {mapConfig} from "./map.config";
 import {getAddress} from "../../helpers/getAddress.helper";
 
-const Map: React.FC<MapProps> = ({startPoint, endPoint}) => {
+const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, step}) => {
 // The map instance:
     const [map, setMap] = useState<L.Map | null>(null);
 
 // Start-End point for the routing machine
-
     const [routingMachine, setRoutingMachine] = useState<any | null>(null);
 
 // Routing machine ref
     const RoutingMachineRef = useRef(null)
 
-
-    async function onMapClick(e: LeafletMouseEvent) {
+    async function onMapClickPopup(e: LeafletMouseEvent) {
         let popup = L.popup()
-
         if (map) {
             const {display_name} = await getAddress(e.latlng.lat, e.latlng.lng)
 
@@ -36,43 +33,61 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint}) => {
         }
     }
 
+    function onClickMapHandler(e: LeafletMouseEvent) {
+        onClickMap(e)
+    }
+
 // Create the routing-machine instance:
     useEffect(() => {
         if (map) {
-            map.on('click', onMapClick)
             const {Routing} = L as any
 
             RoutingMachineRef.current = Routing.control({
+                draggableWaypoints: false,
                 position: 'bottomright',
                 lineOptions: {
                     styles: [
                         {
-                            color: '#757de8',
+                            color: '#757de7',
                         },
                     ],
                 },
                 waypoints: [startPoint, endPoint],
-            })
+            }) as typeof Routing.control
             setRoutingMachine(RoutingMachineRef.current)
         }
         return () => {
-            map?.off('click', onMapClick)
+            RoutingMachineRef.current = null
         }
     }, [map])
 
 
 // Set waypoints when startPoint and endPoint points are updated:
     useEffect(() => {
-        if (routingMachine && map) {
+        if (routingMachine) {
+            map?.on('click', onMapClickPopup)
             routingMachine.addTo(map)
             routingMachine.setWaypoints([startPoint, endPoint])
         }
-    }, [routingMachine, startPoint, endPoint])
+        return () => {
+            map?.off('click', onMapClickPopup)
+        }
+    }, [startPoint, endPoint, routingMachine])
+
+    useEffect(() => {
+        if (map) {
+            map.on('click', onClickMapHandler)
+        }
+        return () => {
+            map?.off('click', onClickMapHandler)
+        }
+    }, [trigger, step]);
+
 
     return (
         <MapContainer
-            center={[45.345566668964558, -75.760933332842754]}
-            zoom={5}
+            center={startPoint}
+            zoom={4}
             zoomControl={false}
             // Set the map instance to state when ready:
             style={{height: '100%'}}

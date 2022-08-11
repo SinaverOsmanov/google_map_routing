@@ -1,8 +1,8 @@
-import {LatLngExpression} from "leaflet";
+import {LatLngExpression, LeafletMouseEvent} from "leaflet";
 
 type AddressType = { latlng: LatLngExpression; title: string; }
 
-export interface PointType {
+export type PointType = {
     id: number,
     title: string,
     description: string,
@@ -14,6 +14,9 @@ export interface PointType {
 
 export type MapProps = {
     startPoint: LatLngExpression,
-    endPoint: LatLngExpression
+    endPoint: LatLngExpression,
+    onClickMap: (event: LeafletMouseEvent) => void,
+    step: number,
+    trigger: boolean,
 }
 
