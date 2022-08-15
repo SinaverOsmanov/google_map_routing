@@ -8,6 +8,7 @@ import {State} from "../store/ducks/globalTypes";
 import {LatLng, LatLngExpression, LeafletMouseEvent} from "leaflet";
 import {getAddress} from "../helpers/getAddress.helper";
 
+
 const {Sider, Content} = Layout;
 
 type RouteAddressType = {
@@ -48,7 +49,9 @@ export default function MapList() {
         const address = await getAddress(lat, lng)
 
         const addressName = address.display_name ?? address.name
-        const fullAddress: RouteAddressType = {name: addressName, latlng: [lat, lng]}
+        const fullAddress: RouteAddressType = {
+            name: addressName, latlng: [lat, lng]
+        }
 
         if (step === 0) {
             setRouteFrom(fullAddress)
@@ -56,6 +59,8 @@ export default function MapList() {
         } else if (step === 1) {
             setRouteTo(fullAddress)
             setStep(prev => prev + 1)
+        } else {
+            // setStep(0)
         }
     }
 
@@ -95,6 +100,7 @@ export default function MapList() {
                 }
             }
             dispatch(addNewPoint(newPoint))
+            dispatch(setCurrentPoint(newPoint))
             clearRoute()
             setShowRouteCreator(false)
         }
@@ -154,11 +160,12 @@ export default function MapList() {
                              minHeight: '280px'
                          }}>
                     {currentPoint &&
-                        <Map startPoint={currentPoint.address.addressFrom.latlng}
-                             endPoint={currentPoint.address.addressTo.latlng}
-                             onClickMap={callbackMapClickHandler}
-                             step={step}
-                             trigger={showRouteCreator}
+                        <Map
+                            startPoint={routeFrom === null ? currentPoint.address.addressFrom.latlng : routeFrom.latlng}
+                            endPoint={routeTo === null ? currentPoint.address.addressTo.latlng : routeTo.latlng}
+                            onClickMap={callbackMapClickHandler}
+                            step={step}
+                            trigger={showRouteCreator}
                         />}
                 </Content>
             </Layout>
