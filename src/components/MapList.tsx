@@ -8,17 +8,23 @@ import {State} from "../store/ducks/globalTypes";
 import {LatLng, LatLngExpression, LeafletMouseEvent} from "leaflet";
 import {getAddress} from "../helpers/getAddress.helper";
 
+
 const {Sider, Content} = Layout;
 
 type RouteAddressType = {
     name: string,
-    latlng: LatLngExpression
+    latlng: LatLngExpression | null
 }
 
 export default function MapList() {
+    const RouteAddressState = {
+        name: '',
+        latlng: null
+    }
+
     const [showRouteCreator, setShowRouteCreator] = useState(false);
-    const [routeFrom, setRouteFrom] = useState<RouteAddressType | null>(null);
-    const [routeTo, setRouteTo] = useState<RouteAddressType | null>(null);
+    const [routeFrom, setRouteFrom] = useState<RouteAddressType>(RouteAddressState);
+    const [routeTo, setRouteTo] = useState<RouteAddressType>(RouteAddressState);
     const [step, setStep] = useState(0);
 
     const dispatch = useDispatch()
@@ -48,7 +54,9 @@ export default function MapList() {
         const address = await getAddress(lat, lng)
 
         const addressName = address.display_name ?? address.name
-        const fullAddress: RouteAddressType = {name: addressName, latlng: [lat, lng]}
+        const fullAddress: RouteAddressType = {
+            name: addressName, latlng: [lat, lng]
+        }
 
         if (step === 0) {
             setRouteFrom(fullAddress)
@@ -66,6 +74,8 @@ export default function MapList() {
 
     function showRouteClickHandler() {
         setShowRouteCreator((prev) => !prev)
+
+
         if (showRouteCreator) {
             clearRoute()
         }
@@ -73,12 +83,12 @@ export default function MapList() {
 
     function clearRoute() {
         setStep(0)
-        setRouteFrom(null)
-        setRouteTo(null)
+        setRouteFrom(RouteAddressState)
+        setRouteTo(RouteAddressState)
     }
 
     function createPointHandler() {
-        if (routeFrom && routeTo && step === 2) {
+        if (routeFrom.latlng && routeTo.latlng && step === 2) {
             const newPoint = {
                 id: points.length + 1,
                 title: '',
@@ -95,6 +105,7 @@ export default function MapList() {
                 }
             }
             dispatch(addNewPoint(newPoint))
+            dispatch(setCurrentPoint(newPoint))
             clearRoute()
             setShowRouteCreator(false)
         }
@@ -110,8 +121,8 @@ export default function MapList() {
                 {showRouteCreator && <div style={{paddingLeft: 10}}>
                     <h2>Create new route</h2>
 
-                    <div>from: <Input type="text" value={routeFrom?.name}/></div>
-                    <div>to: <Input type="text" value={routeTo?.name}/></div>
+                    <div>from: <Input type="text" value={routeFrom.name}/></div>
+                    <div>to: <Input type="text" value={routeTo.name}/></div>
                     <Button onClick={createPointHandler}
                             style={{marginTop: '10px', background: 'darkseagreen', color: 'white'}}
                             block>Create</Button>
@@ -134,7 +145,7 @@ export default function MapList() {
                                 <Col span={7}>
                                     <Row justify={'space-between'}>
                                         <Col>
-                                            <Button onClick={() => editPoint(item.id)}>edit</Button>
+                                            {/*<Button onClick={() => editPoint(item.id)}>edit</Button>*/}
                                         </Col>
                                         <Col>
                                             <Button className={isPointSelect ? 'selected-button' : ''}
@@ -154,11 +165,12 @@ export default function MapList() {
                              minHeight: '280px'
                          }}>
                     {currentPoint &&
-                        <Map startPoint={currentPoint.address.addressFrom.latlng}
-                             endPoint={currentPoint.address.addressTo.latlng}
-                             onClickMap={callbackMapClickHandler}
-                             step={step}
-                             trigger={showRouteCreator}
+                        <Map
+                            startPoint={showRouteCreator ? routeFrom.latlng : currentPoint.address.addressFrom.latlng}
+                            endPoint={showRouteCreator ? routeTo.latlng : currentPoint.address.addressTo.latlng}
+                            onClickMap={callbackMapClickHandler}
+                            step={step}
+                            trigger={showRouteCreator}
                         />}
                 </Content>
             </Layout>

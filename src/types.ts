@@ -13,8 +13,8 @@ export type PointType = {
 }
 
 export type MapProps = {
-    startPoint: LatLngExpression,
-    endPoint: LatLngExpression,
+    startPoint: LatLngExpression | null,
+    endPoint: LatLngExpression | null,
     onClickMap: (event: LeafletMouseEvent) => void,
     step: number,
     trigger: boolean,
