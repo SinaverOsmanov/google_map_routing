@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
 import {MapContainer, TileLayer} from "react-leaflet";
-
 import L, {LeafletMouseEvent} from "leaflet";
 // Import the routing machine JS and CSS:
 import 'leaflet-routing-machine'
@@ -32,6 +31,13 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
 // Routing machine ref
     const RoutingMachineRef = useRef(null)
 
+    function createButton(label: string, container: HTMLElement | undefined) {
+        let btn = L.DomUtil.create('button', '', container);
+        btn.setAttribute('type', 'button');
+        btn.innerHTML = label;
+        return btn;
+    }
+
     async function onMapClickPopup(e: LeafletMouseEvent) {
         let popup = L.popup()
         if (map) {
@@ -40,6 +46,7 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
             popup.setLatLng(e.latlng)
                 .setContent(display_name)
                 .openOn(map);
+
         }
     }
 
@@ -52,7 +59,7 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
     useEffect(() => {
         if (map) {
             const {Routing, Control} = L as any
-            console.log(Control.geocoder, 'control');
+
             RoutingMachineRef.current = Routing.control({
                 waypoints: [startPoint, endPoint],
                 ...controlConfig
@@ -88,7 +95,6 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
 
                 RoutingMachineRef.current = Routing.control({
                     ...controlConfig,
-                    draggableWaypoints: true
                 })
 
                 setRoutingMachine(RoutingMachineRef.current)
