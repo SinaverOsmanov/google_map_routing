@@ -1,6 +1,6 @@
 import {LatLngExpression, LeafletMouseEvent} from "leaflet";
 
-type AddressType = { latlng: LatLngExpression; title: string; }
+export type AddressType = { latlng: LatLngExpression | null; title: string; }
 
 export type PointType = {
     id: number,
