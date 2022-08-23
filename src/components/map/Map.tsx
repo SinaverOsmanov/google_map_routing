@@ -1,26 +1,14 @@
 import React, {useEffect, useRef, useState} from "react";
 import {MapContainer, TileLayer} from "react-leaflet";
-
-import L, {LeafletMouseEvent} from "leaflet";
+import * as L from "leaflet";
+import {LeafletMouseEvent} from "leaflet";
 // Import the routing machine JS and CSS:
 import 'leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import {MapProps} from "../../types";
-import {mapConfig} from "./map.config";
+import {controlConfig, mapConfig} from "./map.config";
 import {getAddress} from "../../helpers/getAddress.helper";
 
-
-const controlConfig = {
-    position: 'bottomright',
-    draggableWaypoints: false,
-    lineOptions: {
-        styles: [
-            {
-                color: '#757de8',
-            },
-        ],
-    },
-}
 
 const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, step}) => {
 // The map instance:
@@ -30,7 +18,7 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
     const [routingMachine, setRoutingMachine] = useState<any | null>(null);
 
 // Routing machine ref
-    const RoutingMachineRef = useRef(null)
+    const RoutingMachineRef = useRef<any | null>(null)
 
     async function onMapClickPopup(e: LeafletMouseEvent) {
         let popup = L.popup()
@@ -40,6 +28,7 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
             popup.setLatLng(e.latlng)
                 .setContent(display_name)
                 .openOn(map);
+
         }
     }
 
@@ -51,12 +40,12 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
 // Create the routing-machine instance:
     useEffect(() => {
         if (map) {
-            const {Routing, Control} = L as any
-            console.log(Control.geocoder, 'control');
+            const {Routing} = L as any
+
             RoutingMachineRef.current = Routing.control({
-                waypoints: [startPoint, endPoint],
                 ...controlConfig
-            }) as typeof Routing.control
+            })
+
             setRoutingMachine(RoutingMachineRef.current)
         }
         return () => {
@@ -87,8 +76,9 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
                 const {Routing} = L as any
 
                 RoutingMachineRef.current = Routing.control({
+
+                    waypoints: [startPoint, endPoint],
                     ...controlConfig,
-                    draggableWaypoints: true
                 })
 
                 setRoutingMachine(RoutingMachineRef.current)
@@ -110,7 +100,6 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
     useEffect(() => {
         if (map && routingMachine) {
             map.on('click', onClickMapHandler)
-            routingMachine.on('routeselected', (e: any) => console.log(e))
         }
         return () => {
             map?.off('click', onClickMapHandler)
@@ -120,11 +109,14 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
 
     return (
         <MapContainer
+            center={[50.94633342311665, 34.10705566406251]}
             zoom={4}
             zoomControl={false}
-            // Set the map instance to state when ready:
             style={{height: '100%'}}
-            whenCreated={(map: L.Map) => setMap(map)}
+            whenCreated={(map: L.Map) => {
+                console.log(map)
+                setMap(map)
+            }}
         >
             <TileLayer {...mapConfig} />
         </MapContainer>

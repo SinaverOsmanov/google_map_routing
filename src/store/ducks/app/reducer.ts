@@ -1,5 +1,5 @@
 import {Action, handleActions} from "redux-actions";
-import {addNewPoint, setCurrentPoint, setMapPoints} from "./actions";
+import {addNewPoint, removePoint, setCurrentPoint, setMapPoints} from "./actions";
 import {MapState} from "./types";
 import {combineReducers} from "@reduxjs/toolkit";
 import {PointType} from "../../../types";
@@ -9,10 +9,11 @@ const initialState: MapState = {
     currentPoint: null
 }
 
-const points = handleActions<PointType[]>(
+const points = handleActions<any>(
     {
         [setMapPoints]: (state: PointType[] | [], action: Action<PointType[]>) => [...action.payload],
-        [addNewPoint]: (state: PointType[] | [], action: Action<any>) => [...state, action.payload]
+        [addNewPoint]: (state: PointType[] | [], action: Action<PointType>) => [...state, action.payload],
+        [removePoint]: (state: PointType[] | [], action: Action<number>) => [...state.filter(route => route.id !== action.payload)]
     },
     initialState.points
 )

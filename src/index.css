@@ -48,6 +48,16 @@ code {
     border: none
 }
 
+.create-button {
+    background: darkseagreen;
+    color: white
+}
+
+.remove-button {
+    background: #e7768e;
+    color: #fff;
+}
+
 .bold {
     font-weight: bold;
 }
