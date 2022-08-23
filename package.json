@@ -1,4 +1,5 @@
 {
+  "homepage": "http://SinaverOsmanov.github.io/google_map_routing",
   "name": "maplist",
   "version": "0.1.0",
   "private": true,
@@ -21,6 +22,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -42,6 +45,7 @@
     "@types/node": "^16.11.45",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
-    "@types/redux-actions": "^2.6.2"
+    "@types/redux-actions": "^2.6.2",
+    "gh-pages": "^4.0.0"
   }
 }
