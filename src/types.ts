@@ -4,8 +4,6 @@ export type AddressType = { latlng: LatLngExpression | null; title: string; }
 
 export type PointType = {
     id: number,
-    title: string,
-    description: string,
     address: {
         addressFrom: AddressType,
         addressTo: AddressType

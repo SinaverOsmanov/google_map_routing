@@ -37,37 +37,10 @@ code {
     background: rgba(255, 255, 255, 0.3);
 }
 
-.site-layout .site-layout-background {
-    background: #fff;
-}
-
-.selected-button, .ant-btn:focus {
-    background: #757de7;
-    color: #fff;
-    box-shadow: none;
-    border: none
-}
-
-.create-button {
-    background: darkseagreen;
-    color: white
-}
-
-.remove-button {
-    background: #e7768e;
-    color: #fff;
-}
-
-.bold {
-    font-weight: bold;
-}
-
-.addressName > div {
-    overflow: hidden;
-    height: 20px;
-}
-
 .active-item {
     background: rgba(0, 0, 0, 0.1);
 }
 
+@media screen {
+
+}

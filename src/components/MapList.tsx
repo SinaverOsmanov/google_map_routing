@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Col, Divider, Input, Layout, List, Row, Typography} from "antd";
+import {Button, Col, Divider, Grid, Input, Layout, List, Row, Typography} from "antd";
 import Map from "./map/Map";
 import {AddressType, PointType} from "../types";
 import {useDispatch, useSelector} from "react-redux";
@@ -7,10 +7,25 @@ import {addNewPoint, getCurrentPoint, getMapPoints, removePoint, setCurrentPoint
 import {State} from "../store/ducks/globalTypes";
 import {LatLng, LeafletMouseEvent} from "leaflet";
 import {getAddress} from "../helpers/getAddress.helper";
-import localStorageService from '../service/localStorage.service'
+import {MenuOutlined, CloseOutlined} from '@ant-design/icons';
+import {
+    ColAddressNameStyle,
+    ContentStyle,
+    CreateRouteBlockStyle,
+    GreenButton,
+    ListItemStyle,
+    MenuButton,
+    PinkButton,
+    SelectButton,
+    SiderStyle,
+    TitleStyle
+} from '../styled';
 
-const {Sider, Content} = Layout;
+import {getScreenWidth} from "../helpers/getScreen.helper";
+
 const {Title} = Typography;
+const {useBreakpoint} = Grid;
+
 
 export default function MapList() {
     const RouteAddressState = {
@@ -24,6 +39,8 @@ export default function MapList() {
     const [step, setStep] = useState(0);
     const dispatch = useDispatch()
     const {points, currentPoint} = useSelector((state: State) => state.map)
+    const [collapsed, setCollapsed] = useState(false);
+
 
     function selectedPoint(id: number) {
         const foundPoint = points.find((point: PointType) => point.id === id)
@@ -86,8 +103,6 @@ export default function MapList() {
         if (routeFrom.latlng && routeTo.latlng && step === 2) {
             const newPoint = {
                 id: Date.now(),
-                title: '',
-                description: '',
                 address: {
                     addressFrom: {
                         latlng: routeFrom.latlng,
@@ -106,49 +121,62 @@ export default function MapList() {
         }
     }
 
+    useEffect(() => {
+        if (collapsed) setShowRouteCreator(false)
+    }, [collapsed]);
+
+    const screens = useBreakpoint();
+
     return (
         <Layout style={{height: '100vh'}}>
-            <Sider style={{background: 'none'}} width={500}>
-                <Title level={2} style={{textAlign: 'center', margin: '10px 0'}}>Points</Title>
+            <SiderStyle
+                collapsible
+                theme={'light'}
+                width={getScreenWidth(screens)}
+                collapsed={collapsed}
+                trigger={null}
+                collapsedWidth={0}
+            >
+
+                <TitleStyle level={2}>Routes</TitleStyle>
                 <Row style={{marginBottom: '10px'}} justify='end'>
                     <Col>
                         <Button onClick={showRouteClickHandler}>Show route creator</Button>
                     </Col>
                 </Row>
-                {showRouteCreator && <div style={{paddingLeft: 10}}>
-                    <h2>Create new route</h2>
+                <CreateRouteBlockStyle show={showRouteCreator}>
+                    <Title level={4}>Create new route</Title>
 
                     <div>from: <Input type="text" value={routeFrom.title}/></div>
-                    <div>to: <Input type="text" value={routeTo.title}/></div>
-                    <Button onClick={createPointHandler} className='create-button' block>Create</Button>
+                    Create <div>to: <Input type="text" value={routeTo.title}/></div>
+                    <GreenButton onClick={createPointHandler} block>Create</GreenButton>
                     <Divider/>
-                </div>
-                }
+                </CreateRouteBlockStyle>
                 <List>
                     {points.length > 0 ? points.map((item: PointType) => {
                         let isPointSelect = item.id === currentPoint?.id
 
-                        return <List.Item
-                            style={{padding: '10px'}}
+                        return <ListItemStyle
                             className={isPointSelect ? 'active-item' : ''}
                             key={item.id}>
                             <Col>
                                 <Row>
-                                    <Col className='addressName'>
-                                        <div><span className='bold'>from:</span> {item.address.addressFrom.title}</div>
-                                        <div><span className='bold'>to:</span> {item.address.addressTo.title}</div>
-                                    </Col>
+                                    <ColAddressNameStyle>
+                                        <div><span>from:</span> {item.address.addressFrom.title}
+                                        </div>
+                                        <div><span>to:</span> {item.address.addressTo.title}</div>
+                                    </ColAddressNameStyle>
                                 </Row>
-                                <Row justify={"end"} style={{marginTop: '10px'}}>
-                                    <Col span={8}>
+                                <Row justify='center' style={{marginTop: '10px'}}>
+                                    <Col span={24}>
                                         <Row justify='space-between'>
-                                            <Col>
-                                                <Button className='remove-button'
-                                                        onClick={() => removePointHandler(item.id)}>remove</Button>
+                                            <Col span={12}>
+                                                <PinkButton
+                                                    onClick={() => removePointHandler(item.id)}>remove</PinkButton>
                                             </Col>
-                                            <Col>
-                                                <Button className={isPointSelect ? 'selected-button' : ''}
-                                                        onClick={() => selectedPoint(item.id)}>{isPointSelect ? 'selected' : 'select'}</Button>
+                                            <Col span={12}>
+                                                <SelectButton background={isPointSelect ? '#757de7' : '#4d96e1'}
+                                                              onClick={() => selectedPoint(item.id)}>{isPointSelect ? 'selected' : 'select'}</SelectButton>
                                             </Col>
                                         </Row>
                                     </Col>
@@ -156,16 +184,15 @@ export default function MapList() {
                                 </Row>
                             </Col>
 
-                        </List.Item>
+                        </ListItemStyle>
                     }) : <div style={{textAlign: 'center'}}>Маршрутов нет</div>}
                 </List>
-            </Sider>
+            </SiderStyle>
             <Layout>
-                <Content className="site-layout-background"
-                         style={{
-                             paddingLeft: '10px',
-                             minHeight: '280px'
-                         }}>
+                <ContentStyle>
+                    <MenuButton background={collapsed ? '#757de7' : '#e7768e'}
+                                onClick={() => setCollapsed(!collapsed)}>{collapsed ? <MenuOutlined
+                    /> : <CloseOutlined/>}</MenuButton>
                     {<Map
                         startPoint={showRouteCreator ? routeFrom.latlng : currentPoint ? currentPoint.address.addressFrom.latlng : null} // showRouteCreator ? routeFrom.latlng : currentPoint!.address.addressFrom.latlng
                         endPoint={showRouteCreator ? routeTo.latlng : currentPoint ? currentPoint.address.addressTo.latlng : null} // showRouteCreator ? routeTo.latlng : currentPoint!.address.addressTo.latlng
@@ -173,8 +200,10 @@ export default function MapList() {
                         step={step}
                         trigger={showRouteCreator}
                     />}
-                </Content>
+                </ContentStyle>
             </Layout>
         </Layout>
     )
+
+
 }

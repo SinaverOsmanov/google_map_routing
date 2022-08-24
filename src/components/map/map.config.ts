@@ -7,6 +7,7 @@ export const controlConfig = {
     position: 'bottomright',
     draggableWaypoints: false,
     routeWhileDragging: false,
+    collapsible: true,
     lineOptions: {
         styles: [
             {
