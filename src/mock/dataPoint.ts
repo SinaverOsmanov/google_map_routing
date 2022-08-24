@@ -4,8 +4,6 @@ import {PointType} from "../types";
 export const dataPoints: PointType[] = [
     {
         id: 1,
-        title: '',
-        description: '',
         address: {
             addressFrom: {
                 latlng: [45.383321536272049, -75.3372987731628],
@@ -19,8 +17,6 @@ export const dataPoints: PointType[] = [
     },
     {
         id: 2,
-        title: '',
-        description: '',
         address: {
             addressFrom: {
                 latlng: [45.295014379864874, -75.898610599532319],
@@ -34,8 +30,6 @@ export const dataPoints: PointType[] = [
     },
     {
         id: 3,
-        title: '',
-        description: '',
         address: {
             addressFrom: {
                 latlng: [45.260659774950561, -75.926651366520872],
@@ -49,8 +43,6 @@ export const dataPoints: PointType[] = [
     },
     {
         id: 4,
-        title: '',
-        description: '',
         address: {
             addressFrom: {
                 latlng: [45.280622216516925, -75.760235255689508],
@@ -64,8 +56,6 @@ export const dataPoints: PointType[] = [
     },
     {
         id: 5,
-        title: '',
-        description: '',
         address: {
             addressFrom: {
                 latlng: [45.408488357092367, -75.703622500360268],

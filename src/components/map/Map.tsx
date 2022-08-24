@@ -43,6 +43,7 @@ const Map: React.FC<MapProps> = ({startPoint, endPoint, onClickMap, trigger, ste
             const {Routing} = L as any
 
             RoutingMachineRef.current = Routing.control({
+
                 ...controlConfig
             })
 
