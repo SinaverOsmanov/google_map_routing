@@ -41,6 +41,8 @@ export default function MapList() {
     const {points, currentPoint} = useSelector((state: State) => state.map)
     const [collapsed, setCollapsed] = useState(false);
 
+    const screens = useBreakpoint();
+
 
     function selectedPoint(id: number) {
         const foundPoint = points.find((point: PointType) => point.id === id)
@@ -124,8 +126,6 @@ export default function MapList() {
     useEffect(() => {
         if (collapsed) setShowRouteCreator(false)
     }, [collapsed]);
-
-    const screens = useBreakpoint();
 
     return (
         <Layout style={{height: '100vh'}}>
