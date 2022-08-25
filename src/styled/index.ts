@@ -30,6 +30,14 @@ export const MenuButton = styled(ButtonStyle)`
   background: ${(props: { background: string }) => props.background}
 `
 
+export const AddNewPointButton = styled(ButtonStyle)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  background: ${(props: { background: string }) => props.background}
+`
+
 export const SelectButton = styled(ButtonStyle)`
   background: ${(props: { background: string }) => props.background};
   color: #fff;
@@ -40,19 +48,19 @@ export const SiderStyle = styled(Sider)`
 
   position: relative;
 
-  &:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: #ccc;
-    height: 100vh;
-    width: 5px;
-
-    &:hover + & {
-      background: #000
-    }
-  }
+  //&:after {
+  //  content: "";
+  //  position: absolute;
+  //  top: 0;
+  //  right: 0;
+  //  background: #ccc;
+  //  height: 100vh;
+  //  width: 5px;
+  //
+  //  &:hover + & {
+  //    background: #000
+  //  }
+  //}
 `
 
 export const TitleStyle = styled(Title)`
@@ -86,12 +94,21 @@ export const ColAddressNameStyle = styled(Col)`
   }
 `
 
-
 export const CreateRouteBlockStyle = styled.div`
   height: ${(props: { show: boolean }) => props.show ? '230px' : '0px'};
   transition: height 1s ease;
   overflow: hidden;
 
 `
+
+export const InputWrapper = styled.div`
+  padding: 0 10px;
+
+  & > div {
+    margin-bottom: 10px;
+  }
+`
+
+
 
 

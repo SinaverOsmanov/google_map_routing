@@ -7,12 +7,11 @@ import {addNewPoint, getCurrentPoint, getMapPoints, removePoint, setCurrentPoint
 import {State} from "../store/ducks/globalTypes";
 import {LatLng, LeafletMouseEvent} from "leaflet";
 import {getAddress} from "../helpers/getAddress.helper";
-import {MenuOutlined, CloseOutlined} from '@ant-design/icons';
+import {CloseOutlined, MenuOutlined, PlusOutlined} from '@ant-design/icons';
 import {
+    AddNewPointButton,
     ColAddressNameStyle,
     ContentStyle,
-    CreateRouteBlockStyle,
-    GreenButton,
     ListItemStyle,
     MenuButton,
     PinkButton,
@@ -22,8 +21,8 @@ import {
 } from '../styled';
 
 import {getScreenWidth} from "../helpers/getScreen.helper";
+import {CreateRouteForm} from "./CreateRouteForm";
 
-const {Title} = Typography;
 const {useBreakpoint} = Grid;
 
 
@@ -40,9 +39,9 @@ export default function MapList() {
     const dispatch = useDispatch()
     const {points, currentPoint} = useSelector((state: State) => state.map)
     const [collapsed, setCollapsed] = useState(false);
+    const [mobileToggle, setMobileToggle] = useState(false);
 
     const screens = useBreakpoint();
-
 
     function selectedPoint(id: number) {
         const foundPoint = points.find((point: PointType) => point.id === id)
@@ -80,19 +79,22 @@ export default function MapList() {
         }
     }
 
-    useEffect(() => {
-        dispatch(getMapPoints())
-        dispatch(getCurrentPoint())
-
-    }, []);
-
-
     function showRouteClickHandler() {
         setShowRouteCreator((prev) => !prev)
 
         if (showRouteCreator) {
             clearRoute()
         }
+    }
+
+    function toggle() {
+        setMobileToggle((prev) => !prev)
+        setShowRouteCreator((prev) => !prev)
+        if (!collapsed && !showRouteCreator) setCollapsed(true)
+    }
+
+    function showMenuClickHandler() {
+        setCollapsed(!collapsed)
     }
 
     function clearRoute() {
@@ -124,7 +126,13 @@ export default function MapList() {
     }
 
     useEffect(() => {
-        if (collapsed) setShowRouteCreator(false)
+        dispatch(getMapPoints())
+        dispatch(getCurrentPoint())
+
+    }, []);
+
+    useEffect(() => {
+        if (collapsed && screens.md) setShowRouteCreator(false)
     }, [collapsed]);
 
     return (
@@ -139,19 +147,17 @@ export default function MapList() {
             >
 
                 <TitleStyle level={2}>Routes</TitleStyle>
-                <Row style={{marginBottom: '10px'}} justify='end'>
-                    <Col>
-                        <Button onClick={showRouteClickHandler}>Show route creator</Button>
-                    </Col>
-                </Row>
-                <CreateRouteBlockStyle show={showRouteCreator}>
-                    <Title level={4}>Create new route</Title>
+                {screens.md && <>
 
-                    <div>from: <Input type="text" value={routeFrom.title}/></div>
-                    Create <div>to: <Input type="text" value={routeTo.title}/></div>
-                    <GreenButton onClick={createPointHandler} block>Create</GreenButton>
-                    <Divider/>
-                </CreateRouteBlockStyle>
+                    <Row style={{marginBottom: '10px'}} justify='end'>
+                        <Col>
+                            <Button onClick={showRouteClickHandler}>Show route creator</Button>
+                        </Col>
+                    </Row>
+                    <CreateRouteForm from={routeFrom.title} to={routeTo.title} create={createPointHandler}
+                                     show={showRouteCreator}/>
+                </>
+                }
                 <List>
                     {points.length > 0 ? points.map((item: PointType) => {
                         let isPointSelect = item.id === currentPoint?.id
@@ -175,7 +181,7 @@ export default function MapList() {
                                                     onClick={() => removePointHandler(item.id)}>remove</PinkButton>
                                             </Col>
                                             <Col span={12}>
-                                                <SelectButton background={isPointSelect ? '#757de7' : '#4d96e1'}
+                                                <SelectButton background={isPointSelect ? '#4b53c3' : '#4d96e1'}
                                                               onClick={() => selectedPoint(item.id)}>{isPointSelect ? 'selected' : 'select'}</SelectButton>
                                             </Col>
                                         </Row>
@@ -190,9 +196,18 @@ export default function MapList() {
             </SiderStyle>
             <Layout>
                 <ContentStyle>
-                    <MenuButton background={collapsed ? '#757de7' : '#e7768e'}
-                                onClick={() => setCollapsed(!collapsed)}>{collapsed ? <MenuOutlined
+                    <MenuButton background={collapsed ? '#4b53c3' : '#e7768e'}
+                                onClick={showMenuClickHandler}>{collapsed ? <MenuOutlined
                     /> : <CloseOutlined/>}</MenuButton>
+
+                    {!screens.md && <>
+                        <AddNewPointButton background={mobileToggle ? '#e7768e' : 'darkseagreen'}
+                                           onClick={toggle}>{mobileToggle ?
+                            <CloseOutlined/> : <PlusOutlined/>}</AddNewPointButton>
+                        <CreateRouteForm from={routeFrom.title} to={routeTo.title} create={createPointHandler}
+                                         show={showRouteCreator}/>
+                    </>}
+
                     {<Map
                         startPoint={showRouteCreator ? routeFrom.latlng : currentPoint ? currentPoint.address.addressFrom.latlng : null} // showRouteCreator ? routeFrom.latlng : currentPoint!.address.addressFrom.latlng
                         endPoint={showRouteCreator ? routeTo.latlng : currentPoint ? currentPoint.address.addressTo.latlng : null} // showRouteCreator ? routeTo.latlng : currentPoint!.address.addressTo.latlng
@@ -204,6 +219,4 @@ export default function MapList() {
             </Layout>
         </Layout>
     )
-
-
 }
